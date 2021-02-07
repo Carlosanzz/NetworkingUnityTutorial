@@ -14,6 +14,7 @@ public class MyNetworkManager : NetworkManager
     public override void OnStopServer() // GENERAL MIRROR CALLBACKS EXECUTED IN SERVER
     {
         Debug.Log("Server stopped!");
+        SpawnEnemies.Instance.StopSpawn();
     }
 
     public override void OnClientConnect(NetworkConnection conn) // GENERAL MIRROR CALLBACKS EXECUTED IN CLIENT
