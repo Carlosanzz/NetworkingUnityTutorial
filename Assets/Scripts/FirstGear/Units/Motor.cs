@@ -29,6 +29,12 @@ namespace MirrorTutorial.GettingStarted.Units
             _characterController = GetComponent<CharacterController>();
         }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            _characterController.enabled = base.hasAuthority;
+        }
+
         private void Update() {
             if(base.hasAuthority) {
                 Move(); 
