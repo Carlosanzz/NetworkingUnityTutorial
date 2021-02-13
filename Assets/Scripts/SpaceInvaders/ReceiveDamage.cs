@@ -9,7 +9,7 @@ public class ReceiveDamage : NetworkBehaviour
 	[SerializeField]
 	private int maxHealth = 10;
 
-	[SyncVar][SerializeField]
+	[SyncVar(hook = nameof(OnHpChanged))]
 	private int currentHealth;
 
 	[SerializeField]
@@ -42,7 +42,7 @@ public class ReceiveDamage : NetworkBehaviour
 		if(this.isServer)
         {
 			this.currentHealth -= amount;
-			this.transform.GetChild(0).GetComponent<TextMesh>().text = this.currentHealth.ToString();
+
 			if(this.currentHealth <= 0)
             {
 				if(this.destroyOnDeath)
@@ -62,17 +62,14 @@ public class ReceiveDamage : NetworkBehaviour
 		}
 	}
 
+public void OnHpChanged(int oldHp, int newHp) {
+	this.transform.GetChild(0).GetComponent<TextMesh>().text = newHp.ToString();
+}
+
 	[ClientRpc]
 	void RpcRespawn ()
     {
 		this.transform.position = this.initialPosition;
 	}
-	// [Command]
-	// // Command on player object
-	// void CmdUpdateScore()
-	// {
-	// 	GameManager.Instance.transform.GetComponent<NetworkIdentity>().AssignClientAuthority(this.GetComponent<NetworkIdentity>().connectionToClient);
-	// 	GameManager.Instance.CmdUpdateScore(); 
-	// 	GameManager.Instance.transform.GetComponent<NetworkIdentity>().RemoveClientAuthority();
-	// }
+
 }

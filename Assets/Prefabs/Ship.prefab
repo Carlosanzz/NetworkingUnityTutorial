@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  speed: 2
+  speed: 5
 --- !u!114 &7104151214283573536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,8 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  maxHealth: 1
-  currentHealth: 0
+  maxHealth: 10
   enemyTag: Enemy
   destroyOnDeath: 1
 --- !u!50 &7104151214283573542
