@@ -10,14 +10,14 @@ namespace MirrorTutorial.GettingStarted.Units
         /*
         * How quickly to move
         */
-        [Tooltip("How quickly move.")]
+        [Tooltip("How quickly to move.")]
         [SerializeField]
         private float _moveRate = 3f;
 
         /*
         * How quickly to rotate
         */
-        [Tooltip("How quickly rotate.")]
+        [Tooltip("How quickly to rotate.")]
         [SerializeField]
         private float _rotateRate = 90f;
 
