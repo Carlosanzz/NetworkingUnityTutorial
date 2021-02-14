@@ -13,11 +13,19 @@ namespace MirrorTutorial.GettingStarted.Clients
 
         private string _lastValue = string.Empty;
 
+        private void Awake() {
+            ClientInstance.OnOwnerCharacterSpawned += SetInitialName;
+        }
         void Update()
         {
             CheckSetName();
         }
 
+        private void SetInitialName(GameObject go) 
+        {
+            ClientInstance.Instance.SetPlayerName(_input.text);
+        }
+        
         private void CheckSetName()
         {
             if(!NetworkClient.active)
