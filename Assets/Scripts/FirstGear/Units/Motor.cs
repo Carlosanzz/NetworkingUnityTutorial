@@ -26,7 +26,7 @@ namespace MirrorTutorial.GettingStarted.Units
         */
         [Tooltip("How strong to jump.")]
         [SerializeField]
-        private float _jumpForce = 90f;
+        private float _jumpForce = 100f;
 
         /// <summary>
         /// Able to jump in the air
@@ -57,11 +57,18 @@ namespace MirrorTutorial.GettingStarted.Units
             float forward  = Input.GetAxisRaw("Vertical");
             float rotation = Input.GetAxisRaw("Horizontal");
             bool  jumping  = Input.GetKeyDown(KeyCode.Space);
-
+            bool isLeft = Input.GetKey(KeyCode.Q);
+            bool isRight = Input.GetKey(KeyCode.E);
             /*
             * X: left/right, Y: up/down, Z: fw/bw. 
             */
-            Vector3 next = new Vector3(0f, 0f, forward * Time.deltaTime * _moveRate);           
+            Vector3 next = new Vector3(0f, 0f, forward * Time.deltaTime * _moveRate);     
+
+            if (isLeft && !isRight) {
+                next += new Vector3 (-Time.deltaTime * _moveRate * 0.8f ,0f,0f);
+            } else if (!isLeft && isRight){
+                next += new Vector3 (Time.deltaTime * _moveRate * 0.8f ,0f,0f);
+            }      
             if (jumping) {
                 if (_characterController.isGrounded) {
                     next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);

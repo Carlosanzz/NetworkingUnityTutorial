@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using MirrorTutorial.GettingStarted.Units;
+
 namespace MirrorTutorial.GettingStarted.Clients 
 {
     public class ClientInstance : NetworkBehaviour
@@ -19,7 +21,9 @@ namespace MirrorTutorial.GettingStarted.Clients
         public static Action<GameObject> OnOwnerCharacterSpawned;
         public void InvokeCharacterSpawned(GameObject go)
         {
+            _currentCharacter = go;
             // Debug.Log("GOT IT!");
+            SetPlayerName(_currentName);
             OnOwnerCharacterSpawned?.Invoke(go);
         }
 
@@ -29,6 +33,13 @@ namespace MirrorTutorial.GettingStarted.Clients
         [Tooltip("Prefab to instantiate as a player")]
         [SerializeField]
         private NetworkIdentity _playerPrefab = null;
+
+        /// <summary>
+        /// Prefab for the Player.
+        /// </summary>  
+        private GameObject _currentCharacter = null;
+
+        private string _currentName = string.Empty;
 
         public override void OnStartLocalPlayer()
         {
@@ -87,6 +98,18 @@ namespace MirrorTutorial.GettingStarted.Clients
             else
             {
                 return Instance;
+            }
+        }
+
+        /// <summary>
+        /// Set player name for the local client
+        /// </summary>
+        /// <param name="name"></param>
+        public void SetPlayerName(string name) {
+            _currentName = name;
+            if(_currentCharacter != null) {
+                PlayerName pn = _currentCharacter.GetComponent<PlayerName>();
+                pn.SetName(name);
             }
         }
 
