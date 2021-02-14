@@ -26,7 +26,22 @@ namespace MirrorTutorial.GettingStarted.Units
         */
         [Tooltip("How strong to jump.")]
         [SerializeField]
-        private float _jumpForce = 100f;
+        private float _jumpForce = 10f;
+        [SerializeField]
+        private int _jumping = 1;
+
+        /// <summary>
+        /// Max jumping time
+        /// </summary>
+        [Tooltip("How much time to dash")]
+        [SerializeField]
+        private const float _maxJumpTime = 2f;
+
+        /// <summary>
+        /// current jumping time
+        /// </summary>
+        [SerializeField]
+        private float _currentJumpTime = _maxJumpTime;
 
         /*
         * How fast to dash
@@ -58,10 +73,10 @@ namespace MirrorTutorial.GettingStarted.Units
 
 
 
-        /// <summary>
-        /// Able to jump in the air
-        /// </summary>
-        private bool _canDoubleJump = true;
+        // /// <summary>
+        // /// Able to jump in the air
+        // /// </summary>
+        // private bool _canDoubleJump = true;
 
         /*
         * Character controller reference
@@ -84,13 +99,18 @@ namespace MirrorTutorial.GettingStarted.Units
         }
 
         private void Move() {
+            /*
+            * INPUTS
+            */
             float forward  = Input.GetAxisRaw("Vertical");
             float rotation = Input.GetAxisRaw("Horizontal");
             bool  isJump  = Input.GetKeyDown(KeyCode.Space);
             bool isLeft = Input.GetKey(KeyCode.Q);
             bool isRight = Input.GetKey(KeyCode.E);
             bool isDash = Input.GetKeyDown(KeyCode.LeftShift);//Input.GetButtonDown("Fire2");
+            
             /*
+            * FWD/BWD & LATERAL
             * X: left/right, Y: up/down, Z: fw/bw. 
             */
             Vector3 next = new Vector3(0f, 0f, forward * Time.deltaTime * _moveRate);     
@@ -101,19 +121,41 @@ namespace MirrorTutorial.GettingStarted.Units
                 next += new Vector3 (Time.deltaTime * _moveRate * 0.8f ,0f,0f);
             }      
 
-            if (isJump) {
-                if (_characterController.isGrounded) {
+
+            /*
+            * JUMP + DOUBLEJUMP
+            */
+            if(_jumping == 1 && isJump)
+            {
+                // _canDoubleJump = false;
+                _jumping = 2;
+                _currentJumpTime = 0f;
+            }
+            if (isJump && _characterController.isGrounded) 
+            {
+                _jumping = 1;
+                _currentJumpTime = 0f;
+            }
+            if(_jumping > 0)
+            {
+                if(_currentJumpTime <_maxJumpTime && _jumping == 1 )
+                {
                     next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
-                    _canDoubleJump = true;
-                } else {
-                    if (_canDoubleJump) {
-                    _canDoubleJump = false;
-                    next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
-                    }
                 }
-            }       
+                if (_currentJumpTime <_maxJumpTime && _jumping == 2)
+                {
+                    next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
+                }
+                if (_currentJumpTime >= _maxJumpTime && _jumping == 2)
+                {
+                    _jumping = 0;
+                }
+                _currentJumpTime += 0.1f;
+            }   
 
-
+            /*
+            * DASH
+            */
             if(isDash && _canDash) {
                 _dashing = true;
                 _currentDashTime = 0f;
@@ -144,9 +186,14 @@ namespace MirrorTutorial.GettingStarted.Units
             }
 
 
+            /*
+            * GRAVITY
+            */
             next += 0.4f * Physics.gravity * Time.deltaTime; 
 
-
+            /*
+            * ROTATION 
+            */
             transform.Rotate(new Vector3(0f, rotation * Time.deltaTime * _rotateRate, 0f));
             _characterController.Move(transform.TransformDirection(next));
             // _characterController.Move(next);
@@ -155,5 +202,23 @@ namespace MirrorTutorial.GettingStarted.Units
         public bool GetDashing () {
             return _dashing;
         }
+
+        private void OnTriggerEnter(Collider other) {
+            if(other.gameObject.tag == "Character")
+            {
+                Debug.Log("GOTIT");
+            }
+        }
+        // public void OnCollisionEnter(Collision other) {
+        //     if(other.gameObject.tag == "Player")
+        //     {
+        //         Debug.Log("GOTIT");
+        //     }
+        // }
+
+        // [Command]
+        // public void CmdKnockBack(Vector3 direction){
+        //     _characterController.Move(transform.TransformDirection(direction * Time.deltaTime * 50f));
+        // }
     }
 }
