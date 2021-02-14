@@ -28,6 +28,36 @@ namespace MirrorTutorial.GettingStarted.Units
         [SerializeField]
         private float _jumpForce = 100f;
 
+        /*
+        * How fast to dash
+        */
+        [Tooltip("How fast to dash.")]
+        [SerializeField]
+        private float _dashForce = 50f;
+
+        private bool _dashing = false;
+
+        /// <summary>
+        /// Able to dash
+        /// </summary>
+        private bool _canDash = true;
+
+        /// <summary>
+        /// Able to dash
+        /// </summary>
+        [Tooltip("How much time to dash")]
+        [SerializeField]
+        private const float _maxDashTime = 1f;
+
+        /// <summary>
+        /// Able to dash
+        /// </summary>
+        private float _currentDashTime = _maxDashTime;
+
+        private float _dashingCooldown = 1f;
+
+
+
         /// <summary>
         /// Able to jump in the air
         /// </summary>
@@ -56,9 +86,10 @@ namespace MirrorTutorial.GettingStarted.Units
         private void Move() {
             float forward  = Input.GetAxisRaw("Vertical");
             float rotation = Input.GetAxisRaw("Horizontal");
-            bool  jumping  = Input.GetKeyDown(KeyCode.Space);
+            bool  isJump  = Input.GetKeyDown(KeyCode.Space);
             bool isLeft = Input.GetKey(KeyCode.Q);
             bool isRight = Input.GetKey(KeyCode.E);
+            bool isDash = Input.GetKeyDown(KeyCode.LeftShift);//Input.GetButtonDown("Fire2");
             /*
             * X: left/right, Y: up/down, Z: fw/bw. 
             */
@@ -69,7 +100,8 @@ namespace MirrorTutorial.GettingStarted.Units
             } else if (!isLeft && isRight){
                 next += new Vector3 (Time.deltaTime * _moveRate * 0.8f ,0f,0f);
             }      
-            if (jumping) {
+
+            if (isJump) {
                 if (_characterController.isGrounded) {
                     next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
                     _canDoubleJump = true;
@@ -79,13 +111,49 @@ namespace MirrorTutorial.GettingStarted.Units
                     next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
                     }
                 }
-            }        
+            }       
+
+
+            if(isDash && _canDash) {
+                _dashing = true;
+                _currentDashTime = 0f;
+                _canDash = false;
+            } 
+            if(_dashing)
+            {
+                if(_currentDashTime < _maxDashTime)
+                {
+                    next+= new Vector3 (0f,0f,_dashForce * Time.deltaTime);
+                    _currentDashTime += 0.1f;
+                }
+                else
+                {
+                    _dashing = false;
+                }
+            }
+            if (!_dashing && !_canDash)
+            {
+                if(_currentDashTime < (_maxDashTime + _dashingCooldown))
+                {
+                    _currentDashTime += 0.1f;
+                }
+                else
+                {
+                    _canDash = true;
+                }
+            }
+
+
             next += 0.4f * Physics.gravity * Time.deltaTime; 
 
 
             transform.Rotate(new Vector3(0f, rotation * Time.deltaTime * _rotateRate, 0f));
             _characterController.Move(transform.TransformDirection(next));
             // _characterController.Move(next);
+        }
+
+        public bool GetDashing () {
+            return _dashing;
         }
     }
 }

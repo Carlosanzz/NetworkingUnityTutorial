@@ -390,7 +390,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  _playerName: Test
   _text: {fileID: 2891652332417591354}
 --- !u!1 &7104767241111241810
 GameObject:
