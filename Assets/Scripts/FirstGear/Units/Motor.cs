@@ -12,7 +12,7 @@ namespace MirrorTutorial.GettingStarted.Units
         */
         [Tooltip("How quickly to move.")]
         [SerializeField]
-        private float _moveRate = 3f;
+        private float _moveRate = 4f;
 
         /*
         * How quickly to rotate
@@ -20,6 +20,18 @@ namespace MirrorTutorial.GettingStarted.Units
         [Tooltip("How quickly to rotate.")]
         [SerializeField]
         private float _rotateRate = 90f;
+
+        /*
+        * How strong to jump
+        */
+        [Tooltip("How strong to jump.")]
+        [SerializeField]
+        private float _jumpForce = 90f;
+
+        /// <summary>
+        /// Able to jump in the air
+        /// </summary>
+        private bool _canDoubleJump = true;
 
         /*
         * Character controller reference
@@ -42,14 +54,28 @@ namespace MirrorTutorial.GettingStarted.Units
         }
 
         private void Move() {
-            float forward = Input.GetAxisRaw("Vertical");
+            float forward  = Input.GetAxisRaw("Vertical");
             float rotation = Input.GetAxisRaw("Horizontal");
+            bool  jumping  = Input.GetKeyDown(KeyCode.Space);
 
             /*
             * X: left/right, Y: up/down, Z: fw/bw. 
             */
-            Vector3 next = new Vector3(0f, 0f, forward * Time.deltaTime * _moveRate);
-            next += Physics.gravity * Time.deltaTime;
+            Vector3 next = new Vector3(0f, 0f, forward * Time.deltaTime * _moveRate);           
+            if (jumping) {
+                if (_characterController.isGrounded) {
+                    next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
+                    _canDoubleJump = true;
+                } else {
+                    if (_canDoubleJump) {
+                    _canDoubleJump = false;
+                    next +=  new Vector3(0f, Time.deltaTime * _jumpForce, 0f);
+                    }
+                }
+            }        
+            next += 0.4f * Physics.gravity * Time.deltaTime; 
+
+
             transform.Rotate(new Vector3(0f, rotation * Time.deltaTime * _rotateRate, 0f));
             _characterController.Move(transform.TransformDirection(next));
             // _characterController.Move(next);

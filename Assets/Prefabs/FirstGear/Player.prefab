@@ -261,8 +261,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  _moveRate: 3
+  _moveRate: 4
   _rotateRate: 90
+  _jumpForce: 90
 --- !u!114 &5997277304606153553
 MonoBehaviour:
   m_ObjectHideFlags: 0

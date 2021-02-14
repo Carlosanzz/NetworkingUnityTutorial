@@ -19,7 +19,7 @@ namespace MirrorTutorial.GettingStarted.Clients
         public static Action<GameObject> OnOwnerCharacterSpawned;
         public void InvokeCharacterSpawned(GameObject go)
         {
-            Debug.Log("GOT IT!");
+            // Debug.Log("GOT IT!");
             OnOwnerCharacterSpawned?.Invoke(go);
         }
 
