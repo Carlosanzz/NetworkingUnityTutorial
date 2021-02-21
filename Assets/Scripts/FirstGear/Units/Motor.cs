@@ -33,7 +33,7 @@ namespace MirrorTutorial.GettingStarted.Units
         /// <summary>
         /// Max jumping time
         /// </summary>
-        [Tooltip("How much time to dash")]
+        [Tooltip("How much time to jump")]
         [SerializeField]
         private const float _maxJumpTime = 2f;
 
@@ -79,11 +79,20 @@ namespace MirrorTutorial.GettingStarted.Units
         // private bool _canDoubleJump = true;
 
         /*
-        * Character controller reference
+        * Character controller and animator references
         */
         private CharacterController _characterController = null;
+        private Animator _animator;
+        private NetworkAnimator _networkAnimator;
         private void Awake() {
             _characterController = GetComponent<CharacterController>();
+        }
+
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+            _animator = GetComponent<Animator>();
+            _networkAnimator = GetComponent<NetworkAnimator>();
         }
 
         public override void OnStartClient()
@@ -107,7 +116,7 @@ namespace MirrorTutorial.GettingStarted.Units
             bool  isJump  = Input.GetKeyDown(KeyCode.Space);
             bool isLeft = Input.GetKey(KeyCode.Q);
             bool isRight = Input.GetKey(KeyCode.E);
-            bool isDash = Input.GetKeyDown(KeyCode.LeftShift);//Input.GetButtonDown("Fire2");
+            bool isDash = Input.GetKeyDown(KeyCode.Tab);//Input.GetButtonDown("Fire2");
             
             /*
             * FWD/BWD & LATERAL
@@ -128,11 +137,13 @@ namespace MirrorTutorial.GettingStarted.Units
             if(_jumping == 1 && isJump)
             {
                 // _canDoubleJump = false;
+                _networkAnimator.SetTrigger("JumpTrigger");
                 _jumping = 2;
                 _currentJumpTime = 0f;
             }
             if (isJump && _characterController.isGrounded) 
             {
+                _networkAnimator.SetTrigger("JumpTrigger");
                 _jumping = 1;
                 _currentJumpTime = 0f;
             }
@@ -190,6 +201,9 @@ namespace MirrorTutorial.GettingStarted.Units
             * GRAVITY
             */
             next += 0.4f * Physics.gravity * Time.deltaTime; 
+            // More realistic option, to have parabolic vertical move (accelerated), but we sall change also jump. 
+            // _characterController.SimpleMove(Physics.gravity * Time.deltaTime * 0.1f);
+
 
             /*
             * ROTATION 
@@ -197,6 +211,19 @@ namespace MirrorTutorial.GettingStarted.Units
             transform.Rotate(new Vector3(0f, rotation * Time.deltaTime * _rotateRate, 0f));
             _characterController.Move(transform.TransformDirection(next));
             // _characterController.Move(next);
+
+            /// <summary>
+            /// Animator shit
+            /// </summary>
+            /// <returns></returns>
+            
+            _animator.SetFloat("Forward", next.z);
+            _animator.SetFloat("Lateral", next.x);
+            _animator.SetFloat("Jump", next.y);
+            if (_characterController.isGrounded)
+                _animator.SetTrigger("Grounded");
+                
+
         }
 
         public bool GetDashing () {

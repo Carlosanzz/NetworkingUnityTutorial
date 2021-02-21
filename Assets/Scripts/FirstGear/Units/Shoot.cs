@@ -11,16 +11,28 @@ public class Shoot : NetworkBehaviour
 	[SerializeField]
 	private float bulletSpeed = 10f;
 
+	private NetworkAnimator _networkAnimator;
+
+    public override void OnStartAuthority()
+    {
+        base.OnStartAuthority();
+		_networkAnimator = GetComponent<NetworkAnimator>();
+    }
+
+    
+
 	void Update ()
     {
 		if(base.hasAuthority)
         {
 			if (Input.GetButtonDown("Fire2"))
 			{
+				_networkAnimator.SetTrigger("Attack");
 				this.CmdShoot(bulletSpeed);
 			}
 			else if (Input.GetButtonDown("Fire3"))
 			{
+				_networkAnimator.SetTrigger("Attack");
 				this.CmdShoot(bulletSpeed * 10f);
 			}
 			
