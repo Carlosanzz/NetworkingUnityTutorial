@@ -137,12 +137,15 @@ namespace MirrorTutorial.GettingStarted.Units
             if(_jumping == 1 && isJump)
             {
                 // _canDoubleJump = false;
+                _animator.SetTrigger("JumpTrigger");
                 _networkAnimator.SetTrigger("JumpTrigger");
+                
                 _jumping = 2;
                 _currentJumpTime = 0f;
             }
             if (isJump && _characterController.isGrounded) 
             {
+                _animator.SetTrigger("JumpTrigger");
                 _networkAnimator.SetTrigger("JumpTrigger");
                 _jumping = 1;
                 _currentJumpTime = 0f;
@@ -220,8 +223,11 @@ namespace MirrorTutorial.GettingStarted.Units
             _animator.SetFloat("Forward", next.z);
             _animator.SetFloat("Lateral", next.x);
             _animator.SetFloat("Jump", next.y);
-            if (_characterController.isGrounded)
+            if (_characterController.isGrounded) {
                 _animator.SetTrigger("Grounded");
+                _networkAnimator.SetTrigger("Grounded");
+            }
+                
                 
 
         }
