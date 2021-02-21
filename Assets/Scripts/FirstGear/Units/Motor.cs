@@ -203,7 +203,7 @@ namespace MirrorTutorial.GettingStarted.Units
             /*
             * GRAVITY
             */
-            next += 0.4f * Physics.gravity * Time.deltaTime; 
+            next += 0.2f * Physics.gravity * Time.deltaTime; 
             // More realistic option, to have parabolic vertical move (accelerated), but we sall change also jump. 
             // _characterController.SimpleMove(Physics.gravity * Time.deltaTime * 0.1f);
 

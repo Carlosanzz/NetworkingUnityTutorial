@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Bullet
   - text
+  - Character
+  - Environment
   layers:
   - Default
   - TransparentFX

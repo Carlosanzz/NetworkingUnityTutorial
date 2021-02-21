@@ -39,7 +39,9 @@ namespace MirrorTutorial.GettingStarted.Clients
             if(_target == null)
                 return;
             transform.rotation = _target.rotation * Quaternion.Euler(_rotationOffset);
-            transform.position = new Vector3(_target.position.x, 0f, _target.position.z) + _positionOffset.z * _target.forward + new Vector3 (0f,_positionOffset.y,0f); 
+            // KEEP THE Y AXIS STILL
+            // transform.position = new Vector3(_target.position.x, 0f, _target.position.z) + _positionOffset.z * _target.forward + new Vector3 (0f,_positionOffset.y,0f); 
+            transform.position = _target.position + _positionOffset.z * _target.forward + new Vector3 (0f,_positionOffset.y,0f);
         }
 
         private void ClientInstance_OnOwnerCharacterSpawned(GameObject go)
